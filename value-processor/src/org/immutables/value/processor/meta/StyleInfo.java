@@ -443,6 +443,12 @@ public abstract class StyleInfo implements ValueMirrors.Style {
   @Value.Parameter
   public abstract int limitStringLengthInToString();
 
+  @Value.Parameter
+  public abstract boolean copyMandatoryAttributes();
+
+  @Value.Parameter
+  public abstract boolean generateAccessors();
+
   static StyleInfo infoFrom(StyleMirror input) {
     return ImmutableStyleInfo.of(
         input.get(),
@@ -535,6 +541,8 @@ public abstract class StyleInfo implements ValueMirrors.Style {
         input.nullableAnnotation(),
         ImmutableSet.copyOf(input.allowedClasspathAnnotationsName()),
         input.fallbackNullableAnnotationName(),
-        input.limitStringLengthInToString());
+        input.limitStringLengthInToString(),
+        input.copyMandatoryAttributes(),
+        input.generateAccessors());
   }
 }

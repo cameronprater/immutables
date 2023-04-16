@@ -88,7 +88,7 @@ public final class TypeResolver {
       return nested;
     }
 
-    Trees.TypeReference declare(Trees.TypeDeclaration type, Trees.Identifier name) {
+    TypeReference declare(Trees.TypeDeclaration type, Trees.Identifier name) {
       if (isDeclared(name)) {
         throw new TypingException(String.format("Redeclaration of local %s", name));
       }
@@ -103,11 +103,11 @@ public final class TypeResolver {
      * @param name identifier
      * @return resolved type
      */
-    Trees.TypeReference declareInvokable(Trees.Identifier name) {
+    TypeReference declareInvokable(Trees.Identifier name) {
       return declare(knife.accessors.invokableType, name);
     }
 
-    Trees.TypeReference declareForIterationAccess(Trees.Identifier name) {
+    TypeReference declareForIterationAccess(Trees.Identifier name) {
       return declare(knife.accessors.iterationType, name);
     }
 
@@ -115,7 +115,7 @@ public final class TypeResolver {
       return locals.containsKey(name.value());
     }
 
-    Trees.TypeReference declare(TypeMirror type, Trees.Identifier name) {
+    TypeReference declare(TypeMirror type, Trees.Identifier name) {
       locals.put(name.value(), type);
       return ResolvedType.of(type);
     }
@@ -125,7 +125,7 @@ public final class TypeResolver {
       if (resolved == null) {
         throw new TypingException(String.format("Could not resolve %s simple type", type));
       }
-      if (type.kind() == Trees.TypeDeclaration.Kind.ITERABLE) {
+      if (type.kind() == Kind.ITERABLE) {
         resolved = makeIterableTypeOf(resolved);
       }
       return resolved;
@@ -135,7 +135,7 @@ public final class TypeResolver {
       return knife.types.getDeclaredType(knife.accessors.iterableElement, resolved);
     }
 
-    BoundAccessExpression resolveAccess(Trees.AccessExpression expression) {
+    BoundAccessExpression resolveAccess(AccessExpression expression) {
       if (expression instanceof BoundAccessExpression) {
         return (BoundAccessExpression) expression;
       }
@@ -169,7 +169,7 @@ public final class TypeResolver {
 
     Trees.ValueDeclaration inferType(
         Trees.ValueDeclaration declaration,
-        Trees.Expression expression,
+        Expression expression,
         InferencePurpose inferenceKind) {
 
       if (expression instanceof BoundAccessExpression) {
@@ -426,9 +426,9 @@ public final class TypeResolver {
       return scope.resolveAccess(value);
     }
 
-    private Expression simplifyExpression(Trees.Expression expression) {
+    private Expression simplifyExpression(Expression expression) {
       if (expression instanceof ApplyExpression) {
-        ImmutableList<Trees.Expression> params = ((ApplyExpression) expression).params();
+        ImmutableList<Expression> params = ((ApplyExpression) expression).params();
         if (params.size() == 1) {
           return params.get(0);
         }

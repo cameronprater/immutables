@@ -271,6 +271,10 @@ public final class ValueMirrors {
 
     int limitStringLengthInToString() default 0;
 
+    boolean copyMandatoryAttributes() default true;
+
+    boolean generateAccessors() default true;
+
     Class<? extends Annotation>[] allowedClasspathAnnotations() default {};
 
     Class<? extends Annotation> fallbackNullableAnnotation() default Inherited.class;

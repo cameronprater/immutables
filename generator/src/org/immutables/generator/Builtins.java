@@ -21,6 +21,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
@@ -83,7 +85,20 @@ public class Builtins {
         }
       };
 
-  public final Templates.Binary<Object, Object, Boolean> eq =
+  public final Function<Object, Integer> len =
+      new Function<Object, Integer>() {
+        @Override
+        public Integer apply(Object input) {
+          return size.apply(input) - 1;
+        }
+
+        @Override
+        public String toString() {
+          return Builtins.class.getSimpleName() + ".len";
+        }
+      };
+
+    public final Templates.Binary<Object, Object, Boolean> eq =
       new Templates.Binary<Object, Object, Boolean>() {
         @Override
         public Boolean apply(Object left, Object right) {

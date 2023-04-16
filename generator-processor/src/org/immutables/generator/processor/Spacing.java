@@ -56,7 +56,7 @@ final class Spacing extends TreesTransformer {
       }
 
       void collectTextParts(Iterable<TextPart> parts) {
-        for (Trees.TextPart text : parts) {
+        for (TextPart text : parts) {
           if (text instanceof TextFragment) {
             if (fragment != null) {
               fragment = joinFraments(fragment, (TextFragment) text);

@@ -151,7 +151,7 @@ public class ObjectChecker<T> {
    * Is the value an instance of a particular type?.
    * @param type the type
    */
-  public void isA(java.lang.Class<?> type) {
+  public void isA(Class<?> type) {
     verifyUsingMatcher(CoreMatchers.instanceOf(type));
   }
 

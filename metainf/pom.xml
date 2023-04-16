@@ -18,7 +18,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>immutables</artifactId>
-    <groupId>org.immutables</groupId>
+    <groupId>io.disquark.immutables</groupId>
     <version>2.9.4-SNAPSHOT</version>
   </parent>
 
@@ -28,12 +28,12 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.immutables</groupId>
+      <groupId>io.disquark.immutables</groupId>
       <artifactId>generator</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.immutables</groupId>
+      <groupId>io.disquark.immutables</groupId>
       <artifactId>generator-processor</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
@@ -46,7 +46,7 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.immutables</groupId>
+      <groupId>io.disquark.immutables</groupId>
       <artifactId>testing</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
@@ -77,8 +77,8 @@
 
               <artifactSet>
                 <includes>
-                  <include>org.immutables:metainf</include>
-                  <include>org.immutables:generator</include>
+                  <include>io.disquark.immutables:metainf</include>
+                  <include>io.disquark.immutables:generator</include>
                   <include>com.google.guava:guava</include>
                 </includes>
               </artifactSet>
@@ -104,7 +104,7 @@
 
               <filters>
                 <filter>
-                  <artifact>org.immutables:metainf</artifact>
+                  <artifact>io.disquark.immutables:metainf</artifact>
                   <includes>
                     <include>**</include>
                   </includes>
@@ -140,13 +140,13 @@
 
               <artifactSet>
                 <includes>
-                  <include>org.immutables:metainf</include>
+                  <include>io.disquark.immutables:metainf</include>
                 </includes>
               </artifactSet>
 
               <filters>
                 <filter>
-                  <artifact>org.immutables:metainf</artifact>
+                  <artifact>io.disquark.immutables:metainf</artifact>
                   <includes>
                     <include>org/immutables/metainf/*</include>
                   </includes>

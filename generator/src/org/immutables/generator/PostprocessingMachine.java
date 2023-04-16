@@ -474,7 +474,7 @@ public final class PostprocessingMachine {
       }
 
       for (Iterator<Entry<String, ImportCandidate>> it = importCandidates.entries().iterator(); it.hasNext();) {
-				Map.Entry<String, ImportCandidate> candidateEntry = it.next();
+				Entry<String, ImportCandidate> candidateEntry = it.next();
 				ImportCandidate candidate = candidateEntry.getValue();
         String originalFullyName = originalImports.get(candidate.simpleName);
         if (originalFullyName != null && !originalFullyName.equals(candidate.preparedImport)) {

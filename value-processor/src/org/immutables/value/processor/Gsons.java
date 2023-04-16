@@ -88,17 +88,17 @@ abstract class Gsons extends ValuesTemplate {
   }
 
   @Generator.Typedef
-  Multimap<Character, Map.Entry<String, ValueAttribute>> Mm;
+  Multimap<Character, Entry<String, ValueAttribute>> Mm;
 
   @Generator.Typedef
-  Map.Entry<String, ValueAttribute> Nv;
+  Entry<String, ValueAttribute> Nv;
 
   // Uhh that's ugly )))
-  public final Function<Iterable<ValueAttribute>, Multimap<Character, Map.Entry<String, ValueAttribute>>> byFirstCharacter =
-      new Function<Iterable<ValueAttribute>, Multimap<Character, Map.Entry<String, ValueAttribute>>>() {
+  public final Function<Iterable<ValueAttribute>, Multimap<Character, Entry<String, ValueAttribute>>> byFirstCharacter =
+      new Function<Iterable<ValueAttribute>, Multimap<Character, Entry<String, ValueAttribute>>>() {
         @Override
-        public Multimap<Character, Map.Entry<String, ValueAttribute>> apply(Iterable<ValueAttribute> attributes) {
-          ImmutableMultimap.Builder<Character, Map.Entry<String, ValueAttribute>> builder = ImmutableMultimap.builder();
+        public Multimap<Character, Entry<String, ValueAttribute>> apply(Iterable<ValueAttribute> attributes) {
+          ImmutableMultimap.Builder<Character, Entry<String, ValueAttribute>> builder = ImmutableMultimap.builder();
 
           for (ValueAttribute attribute : attributes) {
             String serializedName = attribute.getMarshaledName();

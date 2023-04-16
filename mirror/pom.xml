@@ -17,7 +17,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>immutables</artifactId>
-    <groupId>org.immutables</groupId>
+    <groupId>io.disquark.immutables</groupId>
     <version>2.9.4-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -28,26 +28,26 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.immutables</groupId>
+      <groupId>io.disquark.immutables</groupId>
       <artifactId>generator</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.immutables</groupId>
+      <groupId>io.disquark.immutables</groupId>
       <artifactId>generator-processor</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.immutables</groupId>
+      <groupId>io.disquark.immutables</groupId>
       <artifactId>metainf</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.immutables</groupId>
+      <groupId>io.disquark.immutables</groupId>
       <artifactId>testing</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>

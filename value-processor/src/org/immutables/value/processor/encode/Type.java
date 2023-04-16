@@ -386,7 +386,7 @@ public interface Type {
   }
 
   @ThreadSafe
-  class Producer implements Type.Factory {
+  class Producer implements Factory {
     static final Map<String, Primitive> PRIMITIVE_TYPES;
     static {
       ImmutableMap.Builder<String, Primitive> primitives = ImmutableMap.builder();

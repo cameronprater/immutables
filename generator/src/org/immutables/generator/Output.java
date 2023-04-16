@@ -57,7 +57,7 @@ public final class Output {
    */
   public static final String NO_IMPORTS = "//-no-import-rewrite";
 
-  public final Templates.Invokable error = new Templates.Invokable() {
+  public final Invokable error = new Invokable() {
     @Override
     @Nullable
     public Invokable invoke(Invokation invokation, Object... parameters) {
@@ -76,7 +76,7 @@ public final class Output {
     }
   };
 
-  public final Templates.Invokable system = new Templates.Invokable() {
+  public final Invokable system = new Invokable() {
     @Override
     @Nullable
     public Invokable invoke(Invokation invokation, Object... parameters) {
@@ -87,7 +87,7 @@ public final class Output {
     }
   };
 
-  public final Templates.Invokable length = new Templates.Invokable() {
+  public final Invokable length = new Invokable() {
     @Override
     @Nullable
     public Invokable invoke(Invokation invokation, Object... parameters) {
@@ -101,13 +101,13 @@ public final class Output {
       super(1);
     }
 
-    abstract void apply(Invokation invokation, CharSequence content, @Nullable Templates.Invokable original);
+    abstract void apply(Invokation invokation, CharSequence content, @Nullable Invokable original);
 
     @Override
     public final void run(Invokation invokation) {
       Object param = invokation.param(0);
-      Invokable original = param instanceof Templates.Invokable
-          ? (Templates.Invokable) param
+      Invokable original = param instanceof Invokable
+          ? (Invokable) param
           : null;
 
       apply(invokation, toCharSequence(param), original);
@@ -123,18 +123,18 @@ public final class Output {
     }
   }
 
-  public final Templates.Invokable trim = new OutputFilter() {
+  public final Invokable trim = new OutputFilter() {
     @Override
-    void apply(Invokation invokation, CharSequence content, @Nullable Templates.Invokable original) {
+    void apply(Invokation invokation, CharSequence content, @Nullable Invokable original) {
       invokation.out(CharMatcher.whitespace().trimFrom(content));
     }
   };
 
-  public final Templates.Invokable linesShortable = new OutputFilter() {
+  public final Invokable linesShortable = new OutputFilter() {
     private static final int LIMIT = 100;
 
     @Override
-    void apply(Invokation invokation, CharSequence content, @Nullable Templates.Invokable original) {
+    void apply(Invokation invokation, CharSequence content, @Nullable Invokable original) {
       String collapsed = CharMatcher.whitespace().trimAndCollapseFrom(content, ' ');
       int estimatedLimitOnThisLine = LIMIT - invokation.consumer.getCurrentIndentation().length();
 
@@ -150,9 +150,9 @@ public final class Output {
     }
   };
 
-  public final Templates.Invokable collapsible = new OutputFilter() {
+  public final Invokable collapsible = new OutputFilter() {
     @Override
-    void apply(Invokation invokation, CharSequence content, @Nullable Templates.Invokable original) {
+    void apply(Invokation invokation, CharSequence content, @Nullable Invokable original) {
       boolean hasNonWhitespace = !CharMatcher.whitespace().matchesAllOf(content);
       if (hasNonWhitespace) {
         if (original != null) {
@@ -164,7 +164,7 @@ public final class Output {
     }
   };
 
-  public final Templates.Invokable java = new Templates.Invokable() {
+  public final Invokable java = new Invokable() {
     @Override
     public Invokable invoke(Invokation invokation, Object... parameters) {
       String packageName = parameters[0].toString();
@@ -180,7 +180,7 @@ public final class Output {
     }
   };
 
-  public final Templates.Invokable service = new Templates.Invokable() {
+  public final Invokable service = new Invokable() {
     private static final String META_INF_SERVICES = "META-INF/services/";
 
     @Override

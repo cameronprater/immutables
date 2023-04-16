@@ -249,11 +249,11 @@ public abstract class Encodings extends AbstractTemplate {
     private boolean isPrimitiveExpose() {
       if (!expose.isEmpty()) {
         for (EncodedElement e : expose) {
-          if (e.type() instanceof Type.Primitive) {
+          if (e.type() instanceof Primitive) {
             return true;
           }
         }
-      } else if (impl.type() instanceof Type.Primitive) {
+      } else if (impl.type() instanceof Primitive) {
         return true;
       }
       return false;
@@ -803,7 +803,7 @@ public abstract class Encodings extends AbstractTemplate {
         return Naming.identity();
       }
       String encodedMethodName = element.getSimpleName().toString();
-      return Naming.from("*" + Naming.Usage.CAPITALIZED.apply(encodedMethodName));
+      return Naming.from("*" + Usage.CAPITALIZED.apply(encodedMethodName));
     }
 
     private String memberPath(Element member) {
@@ -970,7 +970,7 @@ public abstract class Encodings extends AbstractTemplate {
         return true;
       }
 
-      if (typesReader.get(method.getReturnType()) != Type.Primitive.VOID) {
+      if (typesReader.get(method.getReturnType()) != Primitive.VOID) {
         reporter.withElement(method)
             .error("@Encoding.Init method '%s' should be declared void."
                 + " During instantiation, void return type will be replaced with builder type"
@@ -1012,7 +1012,7 @@ public abstract class Encodings extends AbstractTemplate {
         return true;
       }
 
-      if (typesReader.get(method.getReturnType()) != Type.Primitive.BOOLEAN) {
+      if (typesReader.get(method.getReturnType()) != Primitive.BOOLEAN) {
         reporter.withElement(method)
             .error("@Encoding.IsInit method '%s' must return boolean if ",
                 method.getSimpleName());
@@ -1088,7 +1088,7 @@ public abstract class Encodings extends AbstractTemplate {
       if (hashCode == null) {
         this.hashCode = new EncodedElement.Builder()
             .name("hashCode")
-            .type(Type.Primitive.INT)
+            .type(Primitive.INT)
             .naming(helperNaming("hashCode"))
             .typeParameters(typesReader.parameters)
             .addTags(Tag.PRIVATE, Tag.HASH_CODE, Tag.SYNTH)
@@ -1167,7 +1167,7 @@ public abstract class Encodings extends AbstractTemplate {
         this.isInit = new EncodedElement.Builder()
             .name(synthName("isSet"))
             .naming(helperNaming("isSet"))
-            .type(Type.Primitive.BOOLEAN)
+            .type(Primitive.BOOLEAN)
             .typeParameters(typesReader.parameters)
             .addTags(Tag.PRIVATE, Tag.BUILDER, Tag.IS_INIT, Tag.SYNTH)
             .addAllCode(Code.termsFrom("{\nreturn this." + fieldElementName + " != null;\n}"))
@@ -1175,7 +1175,7 @@ public abstract class Encodings extends AbstractTemplate {
 
         builderInits.add(new EncodedElement.Builder()
             .name(synthName("set"))
-            .type(Type.Primitive.VOID)
+            .type(Primitive.VOID)
             .naming(Naming.identity())
             .typeParameters(typesReader.parameters)
             .addTags(Tag.INIT, Tag.COPY, Tag.BUILDER, Tag.SYNTH)

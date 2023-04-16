@@ -75,7 +75,7 @@ public class Trees {
   }
 
   @Immutable
-  public abstract static class ResolvedType implements Trees.TypeReference, Trees.Synthetic {
+  public abstract static class ResolvedType implements TypeReference, Synthetic {
     @Value.Parameter
     public abstract Object type();
 
@@ -86,7 +86,7 @@ public class Trees {
   }
 
   @Immutable
-  public abstract static class BoundAccessExpression implements Trees.AccessExpression, Trees.Synthetic {
+  public abstract static class BoundAccessExpression implements AccessExpression, Synthetic {
     public abstract List<Object> accessor();
 
     @Override

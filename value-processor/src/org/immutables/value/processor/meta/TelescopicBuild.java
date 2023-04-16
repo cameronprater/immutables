@@ -15,7 +15,6 @@
  */
 package org.immutables.value.processor.meta;
 
-import com.google.common.base.CaseFormat;
 import com.google.common.collect.Lists;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -23,25 +22,19 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 public final class TelescopicBuild {
-  private final ValueType type;
   public final List<TelescopicStage> stages;
   public final List<ValueAttribute> finals;
-  public final String nameBuildFinal;
 
-  private TelescopicBuild(ValueType type,
-      List<TelescopicStage> initializers,
-      List<ValueAttribute> nonMandatory) {
-    this.type = type;
+  private TelescopicBuild(List<TelescopicStage> initializers, List<ValueAttribute> nonMandatory) {
     this.stages = initializers;
     this.finals = nonMandatory;
-    this.nameBuildFinal = (type.constitution.isOutsideBuilder() ? toUpper(type.name()) : "") + "BuildFinal";
   }
 
   public TelescopicStage firstStage() {
     return stages.get(0);
   }
 
-  static TelescopicBuild from(ValueType type, List<ValueAttribute> attributes) {
+  static TelescopicBuild from(List<ValueAttribute> attributes) {
     List<ValueAttribute> mandatory = Lists.newArrayList();
     List<ValueAttribute> finals = Lists.newArrayList();
 
@@ -61,29 +54,20 @@ public final class TelescopicBuild {
       Collections.reverse(mandatory);
       @Nullable TelescopicStage next = null;
       for (ValueAttribute m : mandatory) {
-        next = new TelescopicStage(type, m, next);
+        next = new TelescopicStage(m, next);
         stages.addFirst(next);
       }
     }
-    return new TelescopicBuild(type, stages, finals);
+    return new TelescopicBuild(stages, finals);
   }
 
   public final static class TelescopicStage {
     public final ValueAttribute attribute;
     public final @Nullable TelescopicStage next;
-    public final String nameBuildStage;
 
-    TelescopicStage(ValueType type, ValueAttribute attribute, @Nullable TelescopicStage next) {
+    TelescopicStage(ValueAttribute attribute, @Nullable TelescopicStage next) {
       this.attribute = attribute;
       this.next = next;
-      String name = toUpper(attribute.name());
-      this.nameBuildStage = (type.constitution.isOutsideBuilder()
-          ? toUpper(type.name()) + name
-          : name) + "BuildStage";
     }
-  }
-
-  private static String toUpper(String n) {
-    return CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, n);
   }
 }

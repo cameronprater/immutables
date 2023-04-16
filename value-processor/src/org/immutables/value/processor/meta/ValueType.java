@@ -1072,8 +1072,8 @@ public final class ValueType extends TypeIntrospectionBase implements HasStyleIn
     if (telescopicBuild == null) {
       if (style().stagedBuilder()
           && !getMandatoryAttributes().isEmpty()
-          && (constitution.isNestedFactoryOrConstructor() || !constitution.isOutsideBuilder())) {
-        TelescopicBuild tb = TelescopicBuild.from(this, getSettableAttributes());
+          && !constitution.isOutsideBuilder()) {
+        TelescopicBuild tb = TelescopicBuild.from(getSettableAttributes());
         if (!tb.stages.isEmpty()) {
           telescopicBuild = tb;
         }
@@ -1703,7 +1703,7 @@ public final class ValueType extends TypeIntrospectionBase implements HasStyleIn
               && !m.getModifiers().contains(Modifier.STATIC)
               && !m.getModifiers().contains(Modifier.PRIVATE)
               && !m.getParameters().isEmpty()) {
-            this.boundElements.add(new FuncData.BoundElement(m));
+            this.boundElements.add(new BoundElement(m));
           }
         }
       }
@@ -1960,6 +1960,21 @@ public final class ValueType extends TypeIntrospectionBase implements HasStyleIn
       this.isStatic = isStatic;
       this.definedIn = definedIn;
     }
+  }
+
+  private @Nullable List<NestedEnum> nestedEnums;
+
+  public List<NestedEnum> getNestedEnums() {
+    if (nestedEnums == null) {
+      nestedEnums = new ArrayList<>();
+      for (Element element : element.getEnclosedElements()) {
+        if (element.getKind() != ElementKind.ENUM) {
+          continue;
+        }
+        nestedEnums.add(NestedEnum.from((TypeElement) element));
+      }
+    }
+    return nestedEnums;
   }
 
   /**

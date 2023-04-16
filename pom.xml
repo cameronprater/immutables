@@ -17,7 +17,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.immutables</groupId>
+  <groupId>io.disquark.immutables</groupId>
   <artifactId>immutables</artifactId>
   <version>2.9.4-SNAPSHOT</version>
   <packaging>pom</packaging>
@@ -35,22 +35,10 @@
     <module>generator-fixture</module>
     <module>metainf</module>
     <module>mirror</module>
-    <module>annotate</module>
-    <module>ordinal</module>
-    <module>builder</module>
-    <module>android-stub</module>
-    <module>gson</module>
-    <module>criteria</module>
-    <module>mongo</module>
-    <module>func</module>
-    <module>data</module>
     <module>value-processor</module>
     <module>processor-testlib</module>
     <module>value-annotations</module>
-    <module>value-fixture</module>
     <module>value</module>
-    <module>serial</module>
-    <module>trees</module>
     <module>encode</module>
     <module>bom</module>
   </modules>
@@ -85,15 +73,14 @@
   </licenses>
 
   <scm>
-    <connection>scm:git:https://github.com/immutables/immutables.git</connection>
-    <developerConnection>scm:git:git@github.com:immutables/immutables.git</developerConnection>
-    <url>https://github.com/immutables/immutables.git</url>
+    <connection>scm:git:https://github.com/cottoncammy/immutables.git</connection>
+    <developerConnection>scm:git:git@github.com:cottoncammy/immutables.git</developerConnection>
+    <url>https://github.com/cottoncammy/immutables.git</url>
   </scm>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <module.name>${project.groupId}.${project.artifactId}</module.name>
-    <sonatypeOssDistMgmtSnapshotsUrl>https://oss.sonatype.org/content/repositories/snapshots/</sonatypeOssDistMgmtSnapshotsUrl>
     <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -125,30 +112,14 @@
     <jsr305.version>3.0.1</jsr305.version>
   </properties>
 
-  <repositories>
-    <repository>
-      <id>sonatype-nexus-snapshots</id>
-      <name>Sonatype Nexus Snapshots</name>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-
   <distributionManagement>
     <snapshotRepository>
-      <id>sonatype-nexus-snapshots</id>
-      <name>Sonatype Nexus Snapshots</name>
-      <url>${sonatypeOssDistMgmtSnapshotsUrl}</url>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
     </snapshotRepository>
     <repository>
-      <id>sonatype-nexus-staging</id>
-      <name>Nexus Release Repository</name>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2</url>
     </repository>
   </distributionManagement>
 
@@ -250,16 +221,6 @@
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-release-plugin</artifactId>
-          <version>2.1</version>
-          <configuration>
-            <mavenExecutorId>forked-path</mavenExecutorId>
-            <useReleaseProfile>false</useReleaseProfile>
-            <arguments>-Psonatype-oss-release</arguments>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
           <version>3.0.2</version>
 
@@ -292,7 +253,7 @@
 
   <profiles>
     <profile>
-      <id>sonatype-oss-release</id>
+      <id>release</id>
       <build>
         <plugins>
           <plugin>
@@ -334,7 +295,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
-            <version>1.6</version>
+            <version>3.0.1</version>
             <executions>
               <execution>
                 <id>sign-artifacts</id>
@@ -344,6 +305,17 @@
                 </goals>
               </execution>
             </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <version>1.6.13</version>
+            <extensions>true</extensions>
+            <configuration>
+              <serverId>ossrh</serverId>
+              <nexusUrl>https://s01.oss.sonatype.org</nexusUrl>
+              <autoReleaseAfterClose>true</autoReleaseAfterClose>
+            </configuration>
           </plugin>
         </plugins>
       </build>

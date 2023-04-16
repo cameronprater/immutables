@@ -88,6 +88,32 @@ import static [routine].immutableCopyOf;
 [/if]
 [/template]
 
+[template generateNestedEnums Type type]
+  [for e in type.nestedEnums]
+
+  public enum [e.name][e.interfaceClause] {
+    [for c in e.constants][if c.unknown]
+    @com.fasterxml.jackson.annotation.JsonEnumDefaultValue
+    [/if]
+    [c.name][if e.hasValue]([e.type].[c.name].getValue())[/if][if for.index eq (len e.constants)];[else],[/if]
+    [/for]
+    [if e.hasValue]
+
+    private final [e.valueType] value;
+
+    [e.name]([e.valueType] value) {
+      this.value = value;
+    }
+
+    @com.fasterxml.jackson.annotation.JsonValue
+    public [e.valueType] getValue() {
+      return value;
+    }
+    [/if]
+  }
+  [/for]
+[/template]
+
 [template generateEnclosing Type type]
 [packageWhenTopLevel type true]
 
@@ -102,13 +128,8 @@ import static [routine].immutableCopyOf;
 [type.typeEnclosing.access]final class [type.typeEnclosing.simple] {
   private [type.typeEnclosing.simple]() {}
 [for v in type.nested]
-  [if v.constitution.isNested]
   [generateImmutable v false]
-  [/if]
   [if v.constitution.isOutsideBuilder]
-  [if v.kind.isNestedFactoryOrConstructor]
-  [generateBuilderFactory v]
-  [/if]
   [generateBuilder v false]
   [/if]
   [if v.generateWithInterface]
@@ -123,26 +144,8 @@ import static [routine].immutableCopyOf;
 [if type.detectAttributeBuilders]
   [attributeBuilderTransformUtilities type]
 [/if]
+[generateNestedEnums type]
 }
-[/template]
-
-[template generateBuilderFactory Type type]
-[if not type.factoryBuilder.isNew]
-  [for parameters = type.builderParameters]
-
-/**
- * Creates a {@code [type.typeBuilderImpl.simple]} factory builder.
-[javadocGenerics type]
-[for p in parameters]
- * @param [p.name] {@code [p.name]} parameter[if p.nullable], can be {@code null}[/if]
-[/for]
- * @return A new {@code [type.typeBuilderImpl.simple]} builder
- */
-public static[type.generics.def] [factoryBuildStageBuilderType type] [type.factoryBuilder.applied]([for p in parameters][if not for.first], [/if][p.atNullability][constructorAcceptType p] [p.name][/for]) {
-  return new [type.typeBuilderImpl.relativeRaw][type.generics.diamond]([for p in parameters][if not for.first], [/if][p.name][/for]);
-}
-  [/for]
-[/if]
 [/template]
 
 [template generateImmutable Type type Boolean topLevel]
@@ -255,6 +258,7 @@ public static[type.generics.def] [factoryBuildStageBuilderType type] [type.facto
 [if type.detectAttributeBuilders]
   [attributeBuilderTransformUtilities type]
 [/if]
+[generateNestedEnums type]
 }
 [/for]
 [/template]
@@ -1024,18 +1028,18 @@ public [type.typeAbstract.relative] [v.names.with]([v.atNullability][v.type] val
 
 [template castBuildStagedBuilder Type type String expression][for tb = type.telescopicBuild][if tb andnot type.innerBuilder.isExtending](([type.typeBuilderImpl.relative]) [expression])[else][expression][/if][/for][/template]
 
-[template factoryBuildStageBuilderType Type type][for tb = type.telescopicBuild][if tb][toUpper tb.firstStage.nameBuildStage][type.generics.args][else][type.typeBuilderImpl.relative][/if][/for][/template]
+[template factoryBuildStageBuilderType Type type][for tb = type.telescopicBuild][if tb][toUpper tb.firstStage.attribute.name]BuildStage[type.generics.args][else][type.typeBuilderImpl.relative][/if][/for][/template]
 
-[template telescopicBuilderImplementInterfaces Type type][for tb = type.telescopicBuild][if tb][for nt in tb.stages, v = nt.attribute][nt.nameBuildStage][type.generics.args], [/for][tb.nameBuildFinal][type.generics.args][/if][/for][/template]
+[template telescopicBuilderImplementInterfaces Type type][for tb = type.telescopicBuild][if tb][for nt in tb.stages, v = nt.attribute][toUpper v.name]BuildStage[type.generics.args], [/for]BuildFinal[type.generics.args][/if][/for][/template]
 
 [template generateTelescopicBuilderInterfaces Type type]
 [for tb = type.telescopicBuild]
 [if tb]
 [for nt in tb.stages, v = nt.attribute]
-[let builderReturn][if nt.next][nt.next.nameBuildStage][type.generics.args][else][tb.nameBuildFinal][type.generics.args][/if][/let]
+[let builderReturn][if nt.next][toUpper nt.next.attribute.name]BuildStage[type.generics.args][else]BuildFinal[type.generics.args][/if][/let]
 
 [atGenerated type]
-public interface [nt.nameBuildStage][type.generics] {
+public interface [toUpper v.name]BuildStage[type.generics] {
   /**
    * Initializes the value for the [sourceDocRef v] attribute.
    * @param [v.name] The value for [v.name] [if v.nullable](can be {@code null})[/if]
@@ -1047,7 +1051,7 @@ public interface [nt.nameBuildStage][type.generics] {
 [/for]
 
 [atGenerated type]
-public interface [tb.nameBuildFinal][type.generics] {
+public interface BuildFinal[type.generics] {
 [for v in tb.finals]
 [if v.encoding]
   [-- not implemented --]
@@ -1059,7 +1063,7 @@ public interface [tb.nameBuildFinal][type.generics] {
    * @return {@code this} builder for use in a chained invocation
    */
   [deprecation v]
-  [tb.nameBuildFinal][type.generics.args] [v.names.add]([v.unwrappedElementType] element);
+  BuildFinal[type.generics.args] [v.names.add]([v.unwrappedElementType] element);
 
   /**
    * Adds elements to [sourceDocRef v] [toLower v.rawCollectionType].
@@ -1067,7 +1071,7 @@ public interface [tb.nameBuildFinal][type.generics] {
    * @return {@code this} builder for use in a chained invocation
    */
   [deprecation v]
-  [tb.nameBuildFinal][type.generics.args] [v.names.addv]([v.unwrappedElementType]... elements);
+  BuildFinal[type.generics.args] [v.names.addv]([v.unwrappedElementType]... elements);
 
   /**
    * Adds elements to [sourceDocRef v] [toLower v.rawCollectionType].
@@ -1075,7 +1079,7 @@ public interface [tb.nameBuildFinal][type.generics] {
    * @return {@code this} builder for use in a chained invocation
    */
   [deprecation v]
-  [tb.nameBuildFinal][type.generics.args] [v.names.addAll](Iterable<[v.consumedElementType]> elements);
+  BuildFinal[type.generics.args] [v.names.addAll](Iterable<[v.consumedElementType]> elements);
 [else if v.optionalType]
 
   /**
@@ -1084,7 +1088,7 @@ public interface [tb.nameBuildFinal][type.generics] {
    * @return {@code this} builder for chained invocation
    */
   [deprecation v]
-  [tb.nameBuildFinal][type.generics.args] [v.names.init]([unwrappedOptionalType v] [v.name]);
+  BuildFinal[type.generics.args] [v.names.init]([unwrappedOptionalType v] [v.name]);
 
   /**
    * Initializes the optional value [sourceDocRef v] to [v.name].
@@ -1092,7 +1096,7 @@ public interface [tb.nameBuildFinal][type.generics] {
    * @return {@code this} builder for use in a chained invocation
    */
   [deprecation v]
-  [tb.nameBuildFinal][type.generics.args] [v.names.init]([v.rawType][if not v.jdkSpecializedOptional]<[v.consumedElementType]>[/if] [v.name]);
+  BuildFinal[type.generics.args] [v.names.init]([v.rawType][if not v.jdkSpecializedOptional]<[v.consumedElementType]>[/if] [v.name]);
 [else if v.mapType]
   [for gE = v.consumedElementType, uK = v.unwrappedElementType, wK = v.wrappedElementType, uV = v.unwrappedSecondaryElementType, wV = v.wrappedSecondaryElementType]
     [if v.multimapType]
@@ -1104,7 +1108,7 @@ public interface [tb.nameBuildFinal][type.generics] {
    * @return {@code this} builder for use in a chained invocation
    */
   [deprecation v]
-  [tb.nameBuildFinal][type.generics.args] [v.names.putv]([uK] key, [uV]... values);
+  BuildFinal[type.generics.args] [v.names.putv]([uK] key, [uV]... values);
 
   /**
    * Put all mappings from the specified key to values for [sourceDocRef v] [toLower v.mapType]. Nulls are not permitted
@@ -1113,7 +1117,7 @@ public interface [tb.nameBuildFinal][type.generics] {
    * @return {@code this} builder for use in a chained invocation
    */
   [deprecation v]
-  [tb.nameBuildFinal][type.generics.args] [v.names.putAll]([uK] key, Iterable<[wV]> values);
+  BuildFinal[type.generics.args] [v.names.putAll]([uK] key, Iterable<[wV]> values);
     [/if]
 
   /**
@@ -1123,7 +1127,7 @@ public interface [tb.nameBuildFinal][type.generics] {
    * @return {@code this} builder for use in a chained invocation
    */
   [deprecation v]
-  [tb.nameBuildFinal][type.generics.args] [v.names.put]([uK] key, [uV] value);
+  BuildFinal[type.generics.args] [v.names.put]([uK] key, [uV] value);
 
   /**
    * Put one entry to the [sourceDocRef v] map. Nulls are not permitted
@@ -1131,7 +1135,7 @@ public interface [tb.nameBuildFinal][type.generics] {
    * @return {@code this} builder for use in a chained invocation
    */
   [deprecation v]
-  [tb.nameBuildFinal][type.generics.args] [v.names.put](java.util.Map.Entry<[gE], ? extends [wV]> entry);
+  BuildFinal[type.generics.args] [v.names.put](java.util.Map.Entry<[gE], ? extends [wV]> entry);
 
   /**
    * Put all mappings from the specified map as entries to [sourceDocRef v] map. Nulls are not permitted
@@ -1139,7 +1143,7 @@ public interface [tb.nameBuildFinal][type.generics] {
    * @return {@code this} builder for use in a chained invocation
    */
   [deprecation v]
-  [tb.nameBuildFinal][type.generics.args] [v.names.putAll]([if v.multimapType][guava].collect.Multimap[else]java.util.Map[/if]<[gE], ? extends [wV]> entries);
+  BuildFinal[type.generics.args] [v.names.putAll]([if v.multimapType][guava].collect.Multimap[else]java.util.Map[/if]<[gE], ? extends [wV]> entries);
   [/for]
 [else if v.arrayType]
 
@@ -1152,7 +1156,7 @@ public interface [tb.nameBuildFinal][type.generics] {
    * @return {@code this} builder for use in a chained invocation
    */
   [deprecation v]
-  [tb.nameBuildFinal][type.generics.args] [v.names.init]([v.elementType]... elements);
+  BuildFinal[type.generics.args] [v.names.init]([v.elementType]... elements);
 [else]
 
   /**
@@ -1164,7 +1168,7 @@ public interface [tb.nameBuildFinal][type.generics] {
    * @return {@code this} builder for use in a chained invocation
    */
   [deprecation v]
-  [tb.nameBuildFinal][type.generics.args] [v.names.init]([v.atNullability][v.type] [v.name]);
+  BuildFinal[type.generics.args] [v.names.init]([v.atNullability][v.type] [v.name]);
 [/if]
 [/for]
 
@@ -1189,7 +1193,7 @@ public interface [tb.nameBuildFinal][type.generics] {
      LongPositions nondefaultsPositions = longsFor nondefaults]
 
 /**
-[if type.kind.isFactory or type.kind.isNestedFactoryOrConstructor]
+[if type.kind.isFactory]
  * {@code [type.typeBuilderImpl.simple]} collects parameters and invokes the static factory method:
  * {@code [type.factoryOf](..)}.
  * Call the {@link #[type.names.build]()} method to get a result of type {@code [type.typeValue]}.
@@ -1299,7 +1303,7 @@ public interface [tb.nameBuildFinal][type.generics] {
   }
   [/if]
     [if useFactoryMethod]
-[if type.kind.isFactoryNotNested or type.constitution.isOutsideBuilderNotNested]
+[if type.kind.isFactory or type.constitution.isOutsideBuilder]
 
   /**
 [if type.kind.isFactory]
@@ -1368,7 +1372,7 @@ public interface [tb.nameBuildFinal][type.generics] {
   [atCanIgnoreReturnValue type]
   public final [builderReturnType type] [type.names.from]([type.typeImmutable.relative] instance) {
     [requireNonNull type](instance, "instance");
-    from((short) 0, (Object) instance);
+    from((Object) instance);
     return [builderReturnThis type];
   }
 
@@ -1380,7 +1384,7 @@ public interface [tb.nameBuildFinal][type.generics] {
   [atCanIgnoreReturnValue type]
   public final [builderReturnType type] [type.names.from]([type.typeAbstract.relative] instance) {
     [requireNonNull type](instance, "instance");
-    from((short) 0, (Object) instance);
+    from((Object) instance);
     return [builderReturnThis type];
   }
   [else]
@@ -1393,7 +1397,7 @@ public interface [tb.nameBuildFinal][type.generics] {
   [atCanIgnoreReturnValue type]
   public final [builderReturnType type] [type.names.from]([s.type] instance) {
     [requireNonNull type](instance, "instance");
-    from((short) 0, (Object) instance);
+    from((Object) instance);
     return [builderReturnThis type];
   }
   [/if]
@@ -1403,7 +1407,7 @@ public interface [tb.nameBuildFinal][type.generics] {
 [if bs.hasWildcards andnot type.suppressesUncheckedWarning]
   @SuppressWarnings("unchecked")
 [/if]
-  private void from(short _unused, Object object) {
+  private void from(Object object) {
     [dynamicFromModifiableCheck type 'object' 'return;']
     [for l in bs.positions.longs]
     [atVar type]long bits[emptyIfZero l.index] = 0;
@@ -1934,7 +1938,7 @@ checkNotIsSet([v.names.isSet](), "[v.names.raw]");
       [else]
     this.[v.name].put(
         [requireNonNull type](key, "[v.name] key"),
-        [if v.unwrappedSecondaryElementPrimitiveType]value[else][requireNonNull type](value, value == null ? "[v.name] value for key: " + key : null)[/if]);
+        [if v.unwrappedSecondaryElementPrimitiveType]value[else]value == null ? [requireNonNull type](value, "[v.name] value for key: " + key) : value[/if]);
       [/if]
     [else]
     this.[v.name].put(key, value);
@@ -1967,7 +1971,7 @@ checkNotIsSet([v.names.isSet](), "[v.names.raw]");
       [else]
     this.[v.name].put(
         [requireNonNull type](k, "[v.name] key"),
-        [requireNonNull type](v, v == null ? "[v.name] value for key: " + k : null));
+        v == null ? [requireNonNull type](v, "[v.name] value for key: " + k) : v);
       [/if]
     [else]
     this.[v.name].put(entry);
@@ -2026,7 +2030,7 @@ checkNotIsSet([v.names.isSet](), "[v.names.raw]");
         [else]
       this.[v.name].put(
           [requireNonNull type](k, "[v.name] key"),
-          [requireNonNull type](v, v == null ? "[v.name] value for key: " + k : null));
+          v == null ? [requireNonNull type](v, "[v.name] value for key: " + k) : v);
         [/if]
     }
     [else]
@@ -2683,7 +2687,9 @@ this.[n] = [valueFromValue v][invokeSuper v].[v.names.get]()[/valueFromValue];
 [if type.generateSafeDerived]
   [generateSafeDerivedShim type]
 [/if]
-  [generateAccessorMethods type]
+  [if type.style.generateAccessors]
+    [generateAccessorMethods type]
+  [/if]
   [generateCopyMethods type]
   [generateObjectUtilityMethods type]
   [generateJacksonMapped type]
@@ -3374,8 +3380,9 @@ public String toString() {
   return builder.append([if type.annotationType]")"[else]"}"[/if]).toString();
   [else]
   return [if type.annotationType]"@[type.name]("[else]"[type.name]{"[/if]
-    [for v in type.equivalenceAttributes if not (v.redactedCompletely)]
-      [if v.arrayType]
+    [for v in type.equivalenceAttributes]
+      [if v.redactedCompletely][-- Nothing --]
+      [else if v.arrayType]
       + "[if not for.first], [/if][v.names.raw]=" + [maybeMasked v]java.util.Arrays.toString([v.name])[/maybeMasked]
       [else if v.encoding]
       + "[if not for.first], [/if][v.names.raw]=" + [maybeMasked v]([rr.string v])[/maybeMasked]
@@ -3486,7 +3493,7 @@ return [validated type true]new [type.typeImmutable.relativeRaw][type.generics.d
 
 [template generateCopyMethods Type type]
 [if type.useCopyMethods]
-  [for v in type.settableAttributes]
+  [for v in type.settableAttributes if v.useCopyMethod]
     [if v.encoding]
 [rr.copyMethods v]
 [generateReturnCopyContextual type v]
@@ -4356,7 +4363,7 @@ private static <K, V> java.util.Map<K, V> createUnmodifiableMap(boolean checkNul
     V v = e.getValue();
     if (checkNulls) {
       [requireNonNull type](k, "key");
-      [requireNonNull type](v, v == null ? "value for key: " + k : null);
+      if (v == null) [requireNonNull type](v, "value for key: " + k);
     }
     if (skipNulls && (k == null || v == null)) {
       return java.util.Collections.emptyMap();
@@ -4373,7 +4380,7 @@ private static <K, V> java.util.Map<K, V> createUnmodifiableMap(boolean checkNul
           if (k == null || v == null) continue;
         } else if (checkNulls) {
           [requireNonNull type](k, "key");
-          [requireNonNull type](v, v == null ? "value for key: " + k : null);
+          if (v == null) [requireNonNull type](v, "value for key: " + k);
         }
         linkedMap.put(k, v);
       }
@@ -4426,7 +4433,7 @@ private static <K extends Comparable<K>, V> java.util.[unmodifiableSortedMapInte
         if (k == null || v == null) continue;
       } else if (checkNulls) {
         [requireNonNull type](k, "key");
-        [requireNonNull type](v, v == null ? "value for key: " + k : null);
+        if (v == null) [requireNonNull type](v, "value for key: " + k);
       }
       sortedMap.put(k, v);
     }

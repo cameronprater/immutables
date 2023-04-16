@@ -42,7 +42,7 @@ public @interface Generator {
   /**
    * Imports classes as simple name aliases to be available to template language.
    * Special kind of annotation inheritance works. All imports combined together from
-   * {@link Generator.Import} annotations of template classes and enclosing packages, as well as
+   * {@link Import} annotations of template classes and enclosing packages, as well as
    * from superclasses and their respective packages. Where the formerd declaration override the
    * latter ones.
    */

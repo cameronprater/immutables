@@ -23,9 +23,9 @@ import java.util.*;
 /**
  * This annotation provides namespace for annotations for immutable value object generation.
  * Use one of the nested annotation.
- * @see Value.Immutable
- * @see Value.Include
- * @see Value.Enclosing
+ * @see Immutable
+ * @see Include
+ * @see Enclosing
  */
 public @interface Value {
   /**
@@ -119,7 +119,7 @@ public @interface Value {
    * Includes specified abstract value types into generation of processing.
    * This is usually used to generate immutable implementation of classes from different
    * packages that source code cannot be changed to place {@literal @}{@code Value.Immutable}.
-   * Only public types of suppored kinds is supported (see {@link Value.Immutable}).
+   * Only public types of suppored kinds is supported (see {@link Immutable}).
    */
   @Documented
   @Target({ElementType.TYPE, ElementType.PACKAGE})
@@ -133,7 +133,7 @@ public @interface Value {
    * Immutable implementation classes will be generated as classes enclosed into special "umbrella"
    * top level class, essentialy named after annotated class with "Immutable" prefix (prefix could
    * be customized using {@link Style#typeImmutableEnclosing()}). This could mix
-   * with {@link Value.Immutable} annotation, so immutable implementation class will contains
+   * with {@link Immutable} annotation, so immutable implementation class will contains
    * nested immutable implementation classes.
    * <p>
    * Implementation classes nested under top level class with "Immutable" prefix
@@ -184,9 +184,9 @@ public @interface Value {
    * Annotate attribute as <em>auxiliary</em> and it will be stored and will be accessible, but will
    * be excluded from generated {@code equals}, {@code hashCode} and {@code toString} methods.
    * {@link Lazy Lazy} attributes are always <em>auxiliary</em>.
-   * @see Value.Immutable
-   * @see Value.Derived
-   * @see Value.Default
+   * @see Immutable
+   * @see Derived
+   * @see Default
    */
   @Documented
   @Target(ElementType.METHOD)
@@ -227,14 +227,14 @@ public @interface Value {
   @interface Lazy {}
 
   /**
-   * Works with {@link Value.Immutable} classes to mark abstract accessor method be included as
+   * Works with {@link Immutable} classes to mark abstract accessor method be included as
    * "{@code of(..)}" constructor parameter.
    * <p>
    * Following rules applies:
    * <ul>
-   * <li>No constructor generated if none of methods have {@link Value.Parameter} annotation</li>
+   * <li>No constructor generated if none of methods have {@link Parameter} annotation</li>
    * <li>For object to be constructable with a constructor - all non-default and non-derived
-   * attributes should be annotated with {@link Value.Parameter}.
+   * attributes should be annotated with {@link Parameter}.
    * </ul>
    */
   @Documented
@@ -431,7 +431,7 @@ public @interface Value {
    * Some sneaky collisions may only manifest as compilation errors in generated code.</em>
    * <p>
    * <em>Specific styles will be ignored for a immutable type enclosed with class which is annotated
-   * as {@literal @}{@link Value.Enclosing}. So define styles on the enclosing class.
+   * as {@literal @}{@link Enclosing}. So define styles on the enclosing class.
    * In this way there will be no issues with the naming and structural conventions
    * mismatch on enclosing and nested types.</em>
    */
@@ -834,7 +834,7 @@ public @interface Value {
     /**
      * <p>
      * When {@code true} &mdash; all settable attributes are considered as they are annotated with
-     * {@link Value.Parameter}. Use {@code Value.Parameter(false)} annotation on an attribute to
+     * {@link Parameter}. Use {@code Value.Parameter(false)} annotation on an attribute to
      * cancel the effect of {@code allParameters = true}.
      * </p>
      * <p>
@@ -867,7 +867,7 @@ public @interface Value {
 
     /**
      * This funny-named named attribute, when enabled makes default accessor methods defined in
-     * interfaces/traits behave as if they annotated as {@literal @}{@link Value.Default}.
+     * interfaces/traits behave as if they annotated as {@literal @}{@link Default}.
      * This is not a default behaviour to preserve compatibility and also to have a choice to not
      * opt-in for this new functionality when not needed.
      * @return if consider default method accessors as {@literal @}{@code Value.Default}
@@ -1484,8 +1484,8 @@ public @interface Value {
      * </pre>
      *
      * The array will no longer be empty as by default so only specified entries will be applied.
-     * Please note that standard {@code java.lang} annotations like {@link java.lang.Override},
-     * {@link java.lang.Deprecated}, {@link java.lang.SuppressWarnings} will always be applied where
+     * Please note that standard {@code java.lang} annotations like {@link Override},
+     * {@link Deprecated}, {@link SuppressWarnings} will always be applied where
      * supported, so this configuration
      * have no effect on those. At the same time, {@code javax.annotation.*} or
      * {@code java.annotation.processing.*} are configurable by this style attribute. Another
@@ -1528,6 +1528,18 @@ public @interface Value {
      * @return string limit, by default {@code 0} i.e. no limit
      */
     int limitStringLengthInToString() default 0;
+
+    /**
+     * If disabled, won't generate accessors for attributes.
+     * @return whether to generate accessors, by default {@code true}
+     */
+    boolean generateAccessors() default true;
+
+    /**
+     * Disable to turn off the generation of copy methods for mandatory attributes.
+     * @return whether to generate copy methods for mandatory attributes, by default {@code true}
+     */
+    boolean copyMandatoryAttributes() default true;
 
     /**
      * If implementation visibility is more restrictive than visibility of abstract value type, then

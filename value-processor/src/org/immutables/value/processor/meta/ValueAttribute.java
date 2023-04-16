@@ -1920,6 +1920,10 @@ public final class ValueAttribute extends TypeIntrospectionBase implements HasSt
     return containingType.isBeanFriendlyModifiable();
   }
 
+  public boolean useCopyMethod() {
+    return !isMandatory() || style().copyMandatoryAttributes();
+  }
+
   enum ToName implements Function<ValueAttribute, String> {
     FUNCTION;
 

@@ -87,7 +87,7 @@ public class TypeTest {
   public void resolveVariable() {
     Type map = parser.parse("java.util.Map<A, B>");
 
-    Type.VariableResolver resolver = Type.VariableResolver.empty()
+    VariableResolver resolver = VariableResolver.empty()
         .bind(parameters.variable("A"), Type.OBJECT)
         .bind(parameters.variable("B"), parameters.introduce("C", NO_BOUNDS).variable("C"));
 
@@ -98,16 +98,16 @@ public class TypeTest {
 
   @Test
   public void parseBasics() {
-    check(parser.parse("boolean")).is(Type.Primitive.BOOLEAN);
-    check(parser.parse("void")).is(Type.Primitive.VOID);
+    check(parser.parse("boolean")).is(Primitive.BOOLEAN);
+    check(parser.parse("void")).is(Primitive.VOID);
     check(parser.parse("java.lang.Object")).same(Type.OBJECT);
     check(parser.parse("java.util.List")).same(parser.parse("java.util.List"));
-    check(parser.parse("boolean...")).is(factory.varargs(Type.Primitive.BOOLEAN));
+    check(parser.parse("boolean...")).is(factory.varargs(Primitive.BOOLEAN));
     check(parser.parse("java.lang.Object...")).is(factory.varargs(Type.OBJECT));
     check(parser.parse("boolean[][]")).is(
         factory.array(
             factory.array(
-                Type.Primitive.BOOLEAN)));
+                Primitive.BOOLEAN)));
   }
 
   @Test

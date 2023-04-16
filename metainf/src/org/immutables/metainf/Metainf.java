@@ -21,7 +21,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @see Metainf.Service
+ * @see Service
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target({})

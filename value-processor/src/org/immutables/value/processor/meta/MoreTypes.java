@@ -24,7 +24,7 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.SimpleTypeVisitor6;
 
 /**
- * Static util methods related to {@link javax.lang.model.type.TypeMirror}
+ * Static util methods related to {@link TypeMirror}
  */
 public class MoreTypes {
 

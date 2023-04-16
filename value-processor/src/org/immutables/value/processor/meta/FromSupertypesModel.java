@@ -52,7 +52,7 @@ public final class FromSupertypesModel {
   private final ProcessingEnvironment processing;
   private static final AtomicBoolean typeParseExceptionReported = new AtomicBoolean();
 
-  public final ImmutableList<FromSupertypesModel.FromSupertype> supertypes;
+  public final ImmutableList<FromSupertype> supertypes;
   public final ImmutableList<String> repeating;
   public final LongPositions positions;
   private final Reporter reporter;
@@ -121,7 +121,7 @@ public final class FromSupertypesModel {
 
     Function<String, ValueAttribute> getAttribute = Functions.forMap(attributeMap);
 
-    ImmutableList.Builder<FromSupertypesModel.FromSupertype> builder = ImmutableList.builder();
+    ImmutableList.Builder<FromSupertype> builder = ImmutableList.builder();
 
     for (Map.Entry<String, Collection<String>> e : attributeByType.asMap().entrySet()) {
       builder.add(new FromSupertype(e.getKey(), Iterables.transform(e.getValue(), getAttribute)));

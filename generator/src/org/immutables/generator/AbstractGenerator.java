@@ -37,7 +37,7 @@ public abstract class AbstractGenerator extends AbstractProcessor {
   private final EnvironmentState env = new EnvironmentState();
 
   /**
-   * Override process method and call {@link #invoke(org.immutables.generator.Templates.Invokable)}
+   * Override process method and call {@link #invoke(Templates.Invokable)}
    * from inside it passing invokable fragments from generated template instances.
    */
   protected abstract void process();
@@ -69,7 +69,7 @@ public abstract class AbstractGenerator extends AbstractProcessor {
 
   @Override
   public Set<String> getSupportedAnnotationTypes() {
-    @Nullable SupportedAnnotations annotations = getClass().getAnnotation(Generator.SupportedAnnotations.class);
+    @Nullable SupportedAnnotations annotations = getClass().getAnnotation(SupportedAnnotations.class);
     if (annotations != null) {
       Set<String> annotationNames = Sets.newHashSet();
       for (Class<?> c : annotations.value()) {

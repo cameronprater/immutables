@@ -18,7 +18,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.immutables</groupId>
+    <groupId>io.disquark.immutables</groupId>
     <artifactId>immutables</artifactId>
     <version>2.9.4-SNAPSHOT</version>
   </parent>
@@ -40,18 +40,18 @@
       <version>${guava.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.immutables</groupId>
+      <groupId>io.disquark.immutables</groupId>
       <artifactId>generator-processor</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.immutables</groupId>
+      <groupId>io.disquark.immutables</groupId>
       <artifactId>testing</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.immutables</groupId>
+      <groupId>io.disquark.immutables</groupId>
       <artifactId>metainf</artifactId>
       <version>${project.version}</version>
       <optional>true</optional>

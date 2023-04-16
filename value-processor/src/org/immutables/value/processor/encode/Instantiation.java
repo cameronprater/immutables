@@ -61,7 +61,7 @@ public final class Instantiation {
       EncodingInfo encoding,
       EncodedElement expose,
       Type exposedType,
-      Styles.UsingName.AttributeNames names,
+      AttributeNames names,
       VariableResolver resolver,
       ValueType containingType,
       boolean shimFields) {
@@ -296,7 +296,7 @@ public final class Instantiation {
     }
   };
 
-  final Templates.Invokable fragmentOf = new Templates.Invokable() {
+  final Invokable fragmentOf = new Invokable() {
     @Override
     public @Nullable Invokable invoke(Invokation invokation, Object... parameters) {
       EncodedElement el = (EncodedElement) parameters[0];
@@ -322,7 +322,7 @@ public final class Instantiation {
             invokation.out(", ");
           }
           notFirst = true;
-          Binding binding = Code.Binding.newTop(p.name());
+          Binding binding = Binding.newTop(p.name());
           invokation.out(interpolator.dereference(binding));
         }
         invokation.out(")");
@@ -331,7 +331,7 @@ public final class Instantiation {
     }
   };
 
-  final Templates.Invokable codeOf = new Templates.Invokable() {
+  final Invokable codeOf = new Invokable() {
     @Override
     public @Nullable Invokable invoke(Invokation invokation, Object... parameters) {
       EncodedElement el = (EncodedElement) parameters[0];
@@ -353,7 +353,7 @@ public final class Instantiation {
     }
   };
 
-  final Templates.Invokable codeThisFields = new Templates.Invokable() {
+  final Invokable codeThisFields = new Invokable() {
     @Override
     public @Nullable Invokable invoke(Invokation invokation, Object... parameters) {
       interpolateAndPrint(invokation, (EncodedElement) parameters[0], thisFieldBindings);
@@ -361,7 +361,7 @@ public final class Instantiation {
     }
   };
 
-  final Templates.Invokable codeDeriveFields = new Templates.Invokable() {
+  final Invokable codeDeriveFields = new Invokable() {
     @Override
     public @Nullable Invokable invoke(Invokation invokation, Object... parameters) {
       interpolateAndPrint(invokation, (EncodedElement) parameters[0], deriveFieldBindings);
@@ -384,7 +384,7 @@ public final class Instantiation {
     int indentWrap = 0;
     boolean nextNewline = false;
 
-    for (Code.Term t : terms) {
+    for (Term t : terms) {
       if (t.isWhitespace() && t.is('\n')) {
         nextNewline = true;
         continue;
